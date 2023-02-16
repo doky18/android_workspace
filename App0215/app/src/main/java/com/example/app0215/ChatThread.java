@@ -1,6 +1,9 @@
 package com.example.app0215;
 
 import android.content.Context;
+import android.os.Bundle;
+import android.os.Looper;
+import android.os.Message;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -9,6 +12,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.Vector;
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
 
 //소켓을 보관하고 + 각각 독립적으로 해당 소켓을 이용하여 
 //메시지를 주고받는 객체가 되어야 함 == 스레드
@@ -25,12 +30,21 @@ public class ChatThread implements Runnable{
 	Context context;
 	MainActivity mainActivity;
 	
+	Handler handler;		//스레드가 디자인을 접근하지 못하므로, 대신 메인에게 제어할 것을 부탁해 주는 객체
+	
 	public ChatThread(Socket socket, Context context) {	//생성자
 		thread = new Thread(this);			//러너블 구현 객체를 매개변수로 넣는다
 												//이때부터 Runnable의 run메서드와 스레드 객체가 연계된다
 		this.socket=socket;
 		this.context=context;
 		mainActivity=(MainActivity) context;
+
+		handler= new handler(Looper.myLooper()){
+			public void handlerMessage(""){
+
+			}
+		}
+
 		try {
 			buffr=new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			buffw=new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
@@ -46,6 +60,15 @@ public class ChatThread implements Runnable{
 		try {
 			msg = buffr.readLine();
 			mainActivity.t_view.append(msg+"\n");		//누적
+
+			//핸들러에게 부탁할 예정
+			Message message = new Message();
+			Bundle bundle = new Bundle();
+			bundle.putString("msg", msg);
+			message.setData(bundle);
+
+			handler.handleMessage(null);		//핸들러에 전달...
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

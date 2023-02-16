@@ -44,8 +44,14 @@ public class MainActivity extends AppCompatActivity {
         bt_send.setOnClickListener((v)->{
              //입력한 메시지를 서버에 전송
             String msg = t_input.getText().toString();
-            chatThread.send(msg);
+            Thread thread = new Thread(){
+                @Override
+                public void run() {
+                    chatThread.send(msg);
+                }
+            };
         });
+        thread.start();
     }
 
 
