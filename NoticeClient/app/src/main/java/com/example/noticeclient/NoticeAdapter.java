@@ -90,6 +90,13 @@ public class NoticeAdapter extends BaseAdapter {
             Log.d(TAG,"선택한 글의 idx : "+notice.getNotice_idx());
             //상세 페이지를 담당하는 액티비티 호출 (new 불가, 서블릿과 동일)
             Intent intent = new Intent(listActivity, DetailActivity.class);       //여기서(내부익명 안인걸 기억해), 어디로?
+            //웹이 아니므로, 파라미터 전송 시 intent에 담고 가야함
+            //intent : 안드로이드의 컴포넌트 간 데이터 전달 객체
+            // 안드로이드의 주요 컴포넌트 (개발자가 아닌 시스텡넹 의해 객체가 관리됨):
+            //1. Activity
+            //2. Content Provider
+            //3. Service
+            //4. Broadcast Receiver
             intent.putExtra("notice_idx", notice.getNotice_idx());
             listActivity.startActivity(intent);
 
